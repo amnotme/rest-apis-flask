@@ -9,14 +9,13 @@ stores = [
 
 @app.get("/store")
 def get_stores():
-    # return json.dumps({"stores": stores})
     return {"stores": stores}
 
 
 @app.post("/store")
 def create_store():
     request_data = request.get_json()
-    new_store = {"name": request_data["name"], "items": [], "is_active": True}
+    new_store = {"name": request_data["name"], "items": [], "is_active": False}
     stores.append(new_store)
     return new_store, 201
 
@@ -29,4 +28,20 @@ def create_item(name):
             new_item = {"name": request_data["name"], "price": request_data["price"]}
             store["items"].append(new_item)
             return new_item, 201
+    return {"message": "No store found"}, 404
+
+
+@app.get("/store/<string:name>")
+def get_store(name):
+    for store in stores:
+        if store["name"] == name:
+            return store, 200
+    return {"message": "No store found"}, 404
+
+
+@app.get("/store/<string:name>/item")
+def get_item_in_store(name):
+    for store in stores:
+        if store["name"] == name:
+            return {"items": store["items"]}
     return {"message": "No store found"}, 404
