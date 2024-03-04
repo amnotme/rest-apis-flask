@@ -5,8 +5,10 @@ name = "pypi"
 
 [packages]
 requests = "*"
-flask = "*"
 jsonify = "*"
+flask-smorest = "*"
+python-dotenv = "*"
+flask = "*"
 
 [dev-packages]
 
