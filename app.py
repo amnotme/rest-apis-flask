@@ -1,14 +1,22 @@
 from flask import Flask
 from flask_smorest import Api
 from config.config import Config
-
 from resources.store import blp as StoreBlueprint
 from resources.item import blp as ItemBlueprint
+from db import db
+import models
 
-app = Flask(__name__)
-app.config.from_object(Config)
 
-api = Api(app)
+def create_app(db_url=None):
+    app = Flask(__name__)
+    app.config.from_object(Config(db_url=db_url))
+    db.init_app(app)
 
-api.register_blueprint(ItemBlueprint)
-api.register_blueprint(StoreBlueprint)
+    with app.app_context():
+        db.create_all()
+
+    api = Api(app)
+    api.register_blueprint(ItemBlueprint)
+    api.register_blueprint(StoreBlueprint)
+
+    return app
