@@ -19,12 +19,26 @@ class Item(MethodView):
     @blp.arguments(schema=ItemUpdateSchema)
     @blp.response(status_code=200, schema=ItemSchema)
     def put(self, item_data, item_id):
-        item = ItemModel.query.get_or_404(item_id)
-        NotImplementedError("Updating not implemented yet")
+        item = ItemModel.query.get(item_id)
+
+        if item:
+
+            item.name = item_data["name"]
+            item.price = item_data["price"]
+        else:
+            item = ItemModel(id=item_id, **item_data)
+
+        db.session.add(item)
+        db.session.commit()
+        return item
 
     def delete(self, item_id):
         item = ItemModel.query.get_or_404(item_id)
-        NotImplementedError("Deleting not implemented yet")
+
+        db.session.delete(item)
+        db.session.commit()
+
+        return {"message": "Item has been deleted"}, 200
 
 
 @blp.route("/item")
