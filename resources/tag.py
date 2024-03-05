@@ -8,7 +8,7 @@ from db import db
 blp = Blueprint("tags", __name__, description="Operations on stores")
 
 
-@blp.route("/store/<string:store_id>/tag")
+@blp.route("/store/<int:store_id>/tag")
 class TagInStore(MethodView):
 
     @blp.response(status_code=200, schema=TagSchema(many=True))
@@ -47,7 +47,7 @@ class TagList(MethodView):
         return tags
 
 
-@blp.route("/tag/<string:tag_id>")
+@blp.route("/tag/<int:tag_id>")
 class Tag(MethodView):
 
     @blp.response(status_code=200, schema=TagSchema)
@@ -94,7 +94,7 @@ class Tag(MethodView):
         )
 
 
-@blp.route("/item/<string:item_id>/tag/<string:tag_id>")
+@blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagsToItem(MethodView):
 
     @blp.response(status_code=201, schema=TagSchema)

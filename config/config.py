@@ -14,6 +14,7 @@ class Config:
     SQLALCHEMY_DATABASE_URI = db_url or os.getenv(
         "DATABASE_URL", "sqlite:///data.db"
     )  # this is for dev
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 
     def __init__(self, db_url=None):
         self.db_url = db_url

@@ -8,7 +8,7 @@ from db import db
 blp = Blueprint("stores", __name__, description="Operations on stores")
 
 
-@blp.route("/store/<string:store_id>")
+@blp.route("/store/<int:store_id>")
 class Store(MethodView):
     @blp.response(status_code=200, schema=StoreSchema)
     def get(self, store_id):
