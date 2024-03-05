@@ -1,8 +1,9 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from schemas import TagSchema, ItemTagSchema
-from models import TagModel, StoreModel, ItemTagsModel, ItemModel
+from models import TagModel, StoreModel, ItemModel
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from flask_jwt_extended import jwt_required
 from db import db
 
 blp = Blueprint("tags", __name__, description="Operations on stores")
@@ -11,11 +12,13 @@ blp = Blueprint("tags", __name__, description="Operations on stores")
 @blp.route("/store/<int:store_id>/tag")
 class TagInStore(MethodView):
 
+    @jwt_required()
     @blp.response(status_code=200, schema=TagSchema(many=True))
     def get(self, store_id):
         store = StoreModel.query.get_or_404(store_id)
         return store.tags.all()
 
+    @jwt_required(fresh=True)
     @blp.arguments(schema=TagSchema)
     @blp.response(status_code=201, schema=TagSchema)
     def post(self, tag_data, store_id):
@@ -41,6 +44,7 @@ class TagInStore(MethodView):
 @blp.route("/tag")
 class TagList(MethodView):
 
+    @jwt_required()
     @blp.response(status_code=200, schema=TagSchema(many=True))
     def get(self):
         tags = TagModel.query.all()
@@ -50,11 +54,13 @@ class TagList(MethodView):
 @blp.route("/tag/<int:tag_id>")
 class Tag(MethodView):
 
+    @jwt_required()
     @blp.response(status_code=200, schema=TagSchema)
     def get(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
         return tag
 
+    @jwt_required(fresh=True)
     @blp.arguments(schema=TagSchema)
     @blp.response(status_code=200, schema=TagSchema)
     def put(self, tag_data, tag_id):
@@ -70,6 +76,7 @@ class Tag(MethodView):
 
         return tag
 
+    @jwt_required(fresh=True)
     @blp.response(
         status_code=202,
         description="Deletes a tag if no item is tagged with it",
@@ -97,6 +104,7 @@ class Tag(MethodView):
 @blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagsToItem(MethodView):
 
+    @jwt_required(fresh=True)
     @blp.response(status_code=201, schema=TagSchema)
     def post(self, tag_id, item_id):
 
@@ -114,6 +122,7 @@ class LinkTagsToItem(MethodView):
             )
         return tag
 
+    @jwt_required(fresh=True)
     @blp.response(status_code=200, schema=ItemTagSchema)
     def delete(self, tag_id, item_id):
 
