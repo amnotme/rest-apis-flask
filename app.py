@@ -9,9 +9,11 @@ from db import db
 from blocklist import BLOCKLIST
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-
+from dotenv import load_dotenv
 
 def create_app(db_url=None):
+    load_dotenv()
+
     app = Flask(__name__)
 
     _configure_app(app=app, db_url=db_url)
