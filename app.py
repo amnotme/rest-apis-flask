@@ -10,6 +10,7 @@ from blocklist import BLOCKLIST
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 
+
 def create_app(db_url=None):
     app = Flask(__name__)
 
@@ -40,8 +41,10 @@ def _create_databases(app):
     with app.app_context():
         db.create_all()
 
+
 def _configure_migration(app, db):
     migrate = Migrate(app, db=db)
+
 
 def _configure_jwt(app):
     jwt = JWTManager(app)
