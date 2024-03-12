@@ -37,8 +37,8 @@ def _register_blueprints(app):
 def _create_databases(app):
     db.init_app(app)
 
-    # with app.app_context():
-    #     db.create_all()
+    with app.app_context():
+        db.create_all()
 
 def _configure_migration(app, db):
     migrate = Migrate(app, db=db)
