@@ -14,7 +14,9 @@ flask-migrate = "*"
 passlib = "*"
 gunicorn = "*"
 psycopg2 = "*"
-
+requests = "*"
+rq = "*"
+redis = "*"
 
 [dev-packages]
 

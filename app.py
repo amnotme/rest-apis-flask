@@ -1,3 +1,6 @@
+import os
+
+import redis
 from flask import Flask, jsonify
 from flask_smorest import Api
 from config.config import Config
@@ -10,6 +13,8 @@ from blocklist import BLOCKLIST
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from rq import Queue
+
 
 def create_app(db_url=None):
     load_dotenv()
@@ -18,6 +23,7 @@ def create_app(db_url=None):
 
     _configure_app(app=app, db_url=db_url)
     _create_databases(app=app)
+    _configure_redis(app=app)
     _configure_migration(app=app, db=db)
     _register_blueprints(app=app)
     _configure_jwt(app=app)
@@ -42,6 +48,12 @@ def _create_databases(app):
 
     with app.app_context():
         db.create_all()
+
+
+def _configure_redis(app):
+
+    connection = redis.from_url(os.getenv("REDIS_URL"))
+    app.queue = Queue("emails", connection=connection)
 
 
 def _configure_migration(app, db):

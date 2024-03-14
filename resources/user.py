@@ -1,13 +1,18 @@
+import os
+
 from flask.views import MethodView
+from sqlalchemy import or_
+from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
 from db import db
 from models import UserModel
-from schemas import UserSchema
+from schemas import UserSchema, UserRegisterSchema
 from flask_jwt_extended import create_access_token, create_refresh_token
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from blocklist import BLOCKLIST
+from tasks import send_user_registration_email
 
 blp = Blueprint("users", __name__, description="Operations for users")
 
@@ -74,20 +79,31 @@ class TokenRefresh(MethodView):
 @blp.route("/register")
 class UserRegister(MethodView):
 
-    @blp.arguments(schema=UserSchema)
+    @blp.arguments(schema=UserRegisterSchema)
     def post(self, user_data):
 
-        if UserModel.query.filter(UserModel.username == user_data["username"]).first():
-            abort(http_status_code=409, message="Username already taken")
+        if UserModel.query.filter(
+            or_(
+                UserModel.username == user_data["username"],
+                UserModel.email == user_data["email"],
+            )
+        ).first():
+            abort(http_status_code=409, message="Username or email already taken")
 
         user = UserModel(
             username=user_data["username"],
             password=pbkdf2_sha256.hash(user_data["password"]),
+            email=user_data["email"],
         )
 
         try:
             db.session.add(user)
             db.session.commit()
+
+            current_app.queue.enqueue(
+                send_user_registration_email(email=user.email, username=user.username)
+            )
+
         except SQLAlchemyError:
             abort(
                 http_status_code=500,

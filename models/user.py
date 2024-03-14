@@ -7,4 +7,5 @@ class UserModel(db.Model):
 
     id = Column(Integer, primary_key=True, unique=True)
     username = Column(String(80), unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
     password = Column(String(256), nullable=False)
