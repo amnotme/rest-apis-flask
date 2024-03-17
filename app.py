@@ -17,10 +17,10 @@ from rq import Queue
 
 
 def create_app(db_url=None):
-    load_dotenv()
 
     app = Flask(__name__)
 
+    load_dotenv()
     _configure_app(app=app, db_url=db_url)
     _create_databases(app=app)
     _configure_redis(app=app)
