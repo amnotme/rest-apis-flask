@@ -101,9 +101,9 @@ class UserRegister(MethodView):
             db.session.commit()
 
             current_app.queue.enqueue(
-                'tasks.send_user_registration_email',
+                "tasks.send_user_registration_email",
                 email=user.email,
-                username=user.username
+                username=user.username,
             )
 
         except SQLAlchemyError:
