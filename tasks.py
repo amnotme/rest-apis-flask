@@ -26,7 +26,7 @@ def send_simple_message(to, subject, body, html):
             "text": body,
             "html": html
         },
-    )
+    timeout=60)
 
 
 def send_user_registration_email(username):
