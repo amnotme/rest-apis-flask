@@ -10,7 +10,7 @@ domain_name = os.getenv("MAILGUN_DOMAIN")
 email = os.getenv("MAIL_GUN_EMAIL")
 
 template_loader = jinja2.FileSystemLoader("templates")
-template_env = jinja2.Environment(loader=template_loader)
+template_env = jinja2.Environment(loader=template_loader, autoescape=True)
 
 def render_template(template_filename, **context):
     return template_env.get_template(template_filename).render(**context)
@@ -26,7 +26,7 @@ def send_simple_message(to, subject, body, html):
             "text": body,
             "html": html
         },
-    )
+    timeout=60)
 
 
 def send_user_registration_email(username):
