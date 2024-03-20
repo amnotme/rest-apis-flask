@@ -102,7 +102,6 @@ class UserRegister(MethodView):
 
             current_app.queue.enqueue(
                 "tasks.send_user_registration_email",
-                email=user.email,
                 username=user.username,
             )
 

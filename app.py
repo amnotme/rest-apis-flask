@@ -109,3 +109,7 @@ def _configure_jwt(app):
             ),
             401,
         )
+
+# if __name__ == "__main__":
+#     app = create_app()
+#     app.run(debug=True)
